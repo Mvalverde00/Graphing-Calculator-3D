@@ -45,7 +45,7 @@ GLuint load_shader(std::string vertProgFileName, std::string fragProgFileName) {
 
       // Provide the infolog in whatever manor you deem best.
       // Exit with failure.
-      for (int i = 0; i < errorLog.size(); i++)
+      for (size_t i = 0; i < errorLog.size(); i++)
          std::cout << errorLog[i];
       glDeleteShader(vertShader); // Don't leak the shader.
       return -1;
@@ -69,7 +69,7 @@ GLuint load_shader(std::string vertProgFileName, std::string fragProgFileName) {
 
       // Provide the infolog in whatever manor you deem best.
       // Exit with failure.
-      for (int i = 0; i < errorLog.size(); i++)
+      for (size_t i = 0; i < errorLog.size(); i++)
          std::cout << errorLog[i];
       glDeleteShader(fragShader); // Don't leak the shader.
       return -1;

@@ -1,11 +1,12 @@
 #include "chunk.h"
 
-#include <vector>
-#include "math/vectors.h"
 #include <iostream>
+#include <vector>
+
+#include "math/vectors.h"
 
 float graphing_func(float x, float y) {
-  return sin(y) + x;
+    return 5*sin(x/2.0 + y/2.0);
 }
 
 Chunk::Chunk(float startX, float startY, float endX, float endY) {
@@ -24,7 +25,23 @@ Chunk::Chunk(float startX, float startY, float endX, float endY) {
     this->startY = startY;
     this->endY = endY;
   }
+  this->endX += 1;
+  this->endY += 1;
   rebuildMesh();
+}
+
+Chunk::Chunk(Vector3i chunkPos) :
+    Chunk(chunkPos.x * CHUNK_SIZE, chunkPos.z * CHUNK_SIZE, chunkPos.x * CHUNK_SIZE + CHUNK_SIZE - 1, chunkPos.z * CHUNK_SIZE + CHUNK_SIZE - 1)
+{};
+
+Chunk::Chunk() {
+    startX = endX = startY = endY = 0;
+};
+
+Vector3i Chunk::getChunkPos(Vector3f pos) {
+  // For now, the height component does not matter.  If I switch to marching cubes it will become
+  // necessary as there will be vertical chunks.
+  return Vector3i((int)pos.x / CHUNK_SIZE, 0, (int)pos.z / CHUNK_SIZE);
 }
 
 void Chunk::render() {
@@ -48,14 +65,14 @@ void Chunk::rebuildMesh() {
       float x = startX + xCount*xStep;
       float y = startY + yCount*yStep;
       float z = graphing_func(x, y);
-      Vector3f point = Vector3f(x, y, z);
+      Vector3f point = Vector3f(x, z, y);
       vertices.push_back(point);
     }
   }
 
   // Create indices for triangles using vertices
-  for (int i = 0; i < SAMPLES; i++) {
-    for (int j = 0; j < 4; j++) {
+  for (int i = 0; i < SAMPLES - 1; i++) {
+    for (int j = 0; j < SAMPLES - 1; j++) {
       int base = i + j*SAMPLES;
       // The top triangle
       indices.push_back(base);
@@ -70,20 +87,7 @@ void Chunk::rebuildMesh() {
     }
   }
 
-  /*vertices = {
-     Vector3f(0.5f,  0.5f, 0.5f),  // top right
-     Vector3f(0.5f, -0.5f, 0.5f),  // bottom right
-    Vector3f(-0.5f, -0.5f, 0.5f),  // bottom left
-    Vector3f(-0.5f,  0.5f, 0.5f),  // top left
-  };
-
-  indices = {  // note that we start from 0!
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle
-  };*/
-
   mesh = Mesh(vertices, indices);
-  std::cout << "There are " << vertices.size() << "samples and " << indices.size() << "\n";
 }
 
 Mesh& Chunk::getMesh() {

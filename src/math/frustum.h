@@ -11,29 +11,29 @@ struct Frustum {
   // Full angle from bottom to top, in radians
   float fovY;
   float aspect;
-  float near;
-  float far;
+  float n; // near
+  float f; // far
 
 
   Matrix4f projectionMatrix;
 
   Frustum();
-  Frustum(float near, float far, float left, float right, float bottom, float top) {
-    this->fovY = 2.0 * atan(top/near);
+  Frustum(float n, float f, float left, float right, float bottom, float top) {
+    this->fovY = 2.0f * atan(top/n);
     this->aspect = (right - left) / (top - bottom);
-    this->near = near;
-    this->far = far;
+    this->n = n;
+    this->f = f;
 
-    projectionMatrix = glm::perspective(fovY, aspect, near, far);
+    projectionMatrix = glm::perspective(fovY, aspect, n, f);
   }
 
-  Frustum(float fovY, float aspect, float near, float far) {
+  Frustum(float fovY, float aspect, float n, float f) {
     this->fovY = fovY;
     this->aspect = aspect;
-    this->near = near;
-    this->far = far;
+    this->n = n;
+    this->f = f;
 
-    projectionMatrix = glm::perspective(fovY, aspect, near, far);
+    projectionMatrix = glm::perspective(fovY, aspect, n, f);
   }
 
 };

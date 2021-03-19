@@ -6,7 +6,7 @@
 #include "math/util.h"
 #include "scene/entity.h"
 
-Camera::Camera() : frustum(1, 20.0, -2, 2, -2, 2) {
+Camera::Camera() : frustum(0.3, 20.0, -1, 1, -1, 1) {
 //Camera::Camera() : frustum(deg2rad(120.0), 16.0/9.0, 0.3, 10.0) {
   rot = Quaternion(1.0, 0.0, 0.0, 0.0);
   pos = Vector3f(0.0, 0.0, 0.0);

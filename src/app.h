@@ -2,11 +2,10 @@
 #define __APP_H__
 
 #include <SDL.h>
-#include <SDL_opengl.h>
-#include <gl.h>
 #include <vector>
 #include <memory>
 
+#include "opengl_all.h"
 #include "screens/base_screen.h"
 #include "camera.h"
 

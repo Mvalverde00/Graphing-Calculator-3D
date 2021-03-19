@@ -31,10 +31,22 @@ void Player::processInput(Keyboard& keyboard, Mouse& mouse) {
     vel.x += 1.0;
   }
 
+  if (keyboard.isKeyDown(SDLK_SPACE)) {
+      vel.y += 1.0;
+  }
+  if (keyboard.isKeyDown(SDLK_LSHIFT)) {
+      vel.y -= 1.0;
+  }
+
   float norm = glm::length(vel);
 
   if (norm != 0.0) {
     float playerSpeed = 2.5;
+    // sprinting with r
+    if (keyboard.isKeyDown(SDLK_r)) {
+      playerSpeed *= 5;
+    }
+
     vel = playerSpeed * vel / norm;
   }
 
@@ -47,10 +59,11 @@ void Player::processInput(Keyboard& keyboard, Mouse& mouse) {
     pitch = -89.5;
   }
 
-  rot = axisAngleToQuat(deg2rad(pitch), Vector3f(1.0, 0.0, 0.0)) * axisAngleToQuat(deg2rad(yaw), Vector3f(0.0, 1.0, 0.0));
+  Quaternion yawRot = axisAngleToQuat(deg2rad(yaw), Vector3f(0.0, 1.0, 0.0));
+  vel = Vector3f((yawRot * Vector4f(vel, 1.0)));
+  
 
-  std::cout << "Mouse dx, dy = " << mouse.getDx() << ", " << mouse.getDy() << "\n";
-  std::cout << "quaternion: " << glm::to_string(rot) << "\n";
+  rot = yawRot * axisAngleToQuat(deg2rad(pitch), Vector3f(1.0, 0.0, 0.0));
 };
 
 void Player::tick(double dt) {

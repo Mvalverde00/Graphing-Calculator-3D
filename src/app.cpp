@@ -7,18 +7,21 @@
 #include "math/util.h"
 
 App::App() {
-  window = SDL_CreateWindow("SDL2 + OpenGL", 0, 0, 800, 800, SDL_WINDOW_OPENGL);
+  // Set OpenGL 3.3 as target version.
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+  window = SDL_CreateWindow("SDL2 + OpenGL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 1200, SDL_WINDOW_OPENGL);
   assert(window);
   context = SDL_GL_CreateContext(window);
 
-  glViewport(0, 0, 800, 800);
+  SDL_SetRelativeMouseMode(SDL_TRUE);
+  SDL_GL_SetSwapInterval(1); // Enable VSync
+
+  glewInit();
+  glViewport(0, 0, 1200, 1200);
 
   cam = Camera();
-  cam.translate(Vector3f(0.0, 0.0, 10.0));
-  //cam.rotate(axisAngleToQuat(deg2rad(45.0), Vector3f(0.0, 1.0, 0.0)));
-
-  //SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
-  SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 App::~App() {
@@ -59,7 +62,7 @@ void App::run() {
       accumulator -= UPDATE_TIMESTEP;
     }
 
-    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     screens.back()->render(cam);
     SDL_GL_SwapWindow(window);
@@ -71,4 +74,6 @@ void App::run() {
 int main(int argc, char* argv[]) {
   App app = App();
   app.run();
+
+  return 1;
 }
