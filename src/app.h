@@ -4,8 +4,10 @@
 #include <SDL.h>
 #include <vector>
 #include <memory>
+#include <Engine/src/opengl_all.h>
+#include <Engine/src/window.h>
+#include <Engine/src/fps_counter.h>
 
-#include "opengl_all.h"
 #include "screens/base_screen.h"
 #include "camera.h"
 
@@ -19,8 +21,8 @@ class App {
 public:
 
   Camera cam;
-  SDL_Window* window;
-  SDL_GLContext context;
+  Engine::Window* _window;
+  Engine::FPSCounter _fpsCounter;
 
   App();
   ~App();

@@ -2,11 +2,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <Engine/src/math/vectors.h>
 
-#include "math/util.h"
 #include "scene/entity.h"
 
-Camera::Camera() : frustum(0.3, 20.0, -1, 1, -1, 1) {
+Camera::Camera() : frustum(0.3, 50.0, -1, 1, -1, 1) {
 //Camera::Camera() : frustum(deg2rad(120.0), 16.0/9.0, 0.3, 10.0) {
   rot = Quaternion(1.0, 0.0, 0.0, 0.0);
   pos = Vector3f(0.0, 0.0, 0.0);

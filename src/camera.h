@@ -2,8 +2,8 @@
 #define __CAMERA_H__
 
 #include <glm.hpp>
-#include "math/vectors.h"
-#include "math/frustum.h"
+#include <Engine/src/math/vectors.h>
+#include <Engine/src/math/frustum.h>
 
 class Entity;
 
@@ -11,7 +11,7 @@ class Camera {
   Vector3f pos;
   Quaternion rot;
 
-  Frustum frustum;
+  Engine::Frustum frustum;
 
   Matrix4f viewMatrix;
   Matrix4f projectViewMatrix;

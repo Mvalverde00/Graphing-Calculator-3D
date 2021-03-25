@@ -5,13 +5,11 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "../app.h"
-#include "../opengl_all.h"
-#include "../load_shader.h"
 
 
-CalculatorScreen::CalculatorScreen(App& app) : BaseScreen(app), chunk(-10.0, -10.0, 10.0, 10.0) {
-  shader = Shader("shaders/vert.glsl", "shaders/frag.glsl");
-  axesShader = Shader("shaders/colored_vertices.vert", "shaders/colored_vertices.frag");
+CalculatorScreen::CalculatorScreen(App& app) : BaseScreen(app), chunkManager() {
+  shader = Engine::Shader("shaders/vert.glsl", "shaders/frag.glsl");
+  axesShader = Engine::Shader("shaders/colored_vertices.vert", "shaders/colored_vertices.frag");
   player = Player(Vector3f(0.0, 1.0, 0.0));
   app.cam.bind(&player);
 	
@@ -19,7 +17,7 @@ CalculatorScreen::CalculatorScreen(App& app) : BaseScreen(app), chunk(-10.0, -10
   std::vector<Vector3f> vertices = {Vector3f(-100.0, 0.0, 0.0), Vector3f(100.0, 0.0, 0.0), Vector3f(0.0, -100.0, 0.0), Vector3f(0.0, 100.0, 0.0), Vector3f(0.0, 0.0, -100.0), Vector3f(0.0, 0.0, 100.0)};
   // X = Red, Y = Green, Z = Blue
   std::vector<Vector3f> colors = { Vector3f(1.0, 0.0, 0.0), Vector3f(1.0, 0.0, 0.0), Vector3f(0.0, 1.0, 0.0), Vector3f(0.0, 1.0, 0.0), Vector3f(0.0, 0.0, 1.0), Vector3f(0.0, 0.0, 1.0) };
-  axes = Mesh(vertices);
+  axes = Engine::Mesh(vertices);
   axes.addVBO(colors);
 }
 
@@ -37,6 +35,7 @@ void CalculatorScreen::update(double dt) {
   player.processInput(keyboard, mouse);
   player.tick(dt);
 
+  chunkManager.update();
   chunkManager.recenter(player.getPos());
 }
 
@@ -57,4 +56,8 @@ void CalculatorScreen::render(Camera& cam) {
   glBindVertexArray(0);
 
   glBindVertexArray(0);
+}
+
+void CalculatorScreen::renderImgui() {
+  player.renderImgui();
 }

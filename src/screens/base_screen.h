@@ -22,6 +22,8 @@ public:
   virtual void update(double dt) = 0;
   /* Called once per frame after everything else */
   virtual void render(Camera& cam) = 0;
+  /* Called once per frame after everything else, optimal feature*/
+  virtual void renderImgui() = 0;
 };
 
 #endif

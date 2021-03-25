@@ -2,36 +2,34 @@
 
 #include <cassert>
 #include <iostream>
+#include <Engine/src/opengl_all.h>
+#include <Engine/dep/imgui.h>
+#include <Engine/dep/imgui_impl_sdl.h>
+#include <Engine/dep/imgui_impl_opengl3.h>
 
 #include "screens/calculator_screen.h"
-#include "math/util.h"
+#include "screens/blank_screen.h"
 
-App::App() {
-  // Set OpenGL 3.3 as target version.
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-  window = SDL_CreateWindow("SDL2 + OpenGL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 1200, SDL_WINDOW_OPENGL);
-  assert(window);
-  context = SDL_GL_CreateContext(window);
+App::App() : _fpsCounter(1000) {
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER);
 
-  SDL_SetRelativeMouseMode(SDL_TRUE);
-  SDL_GL_SetSwapInterval(1); // Enable VSync
-
-  glewInit();
-  glViewport(0, 0, 1200, 1200);
-
+  _window = new Engine::Window("SDL2 + OpenGL", 1200, 1200);
   cam = Camera();
+
+  std::cout << "Initialzed App!\n";
 }
 
 App::~App() {
-  SDL_GL_DeleteContext(context);
-  SDL_DestroyWindow(window);
+  delete _window;
+
+  std::cout << "Deleted App!\n";
 }
 
 void App::run() {
-  std::unique_ptr<BaseScreen> screen = std::unique_ptr<BaseScreen>(new CalculatorScreen(*this));
+  //std::unique_ptr<BaseScreen> screen = std::unique_ptr<BaseScreen>(new CalculatorScreen(*this));
   screens.push_back( std::unique_ptr<BaseScreen>(new CalculatorScreen(*this)) );
+  //screens.push_back(std::unique_ptr<BaseScreen>(new BlankScreen(*this)));
 
   SDL_Event event;
   bool running = true;
@@ -47,6 +45,7 @@ void App::run() {
     screens.back()->beforeFrame();
 
     while (SDL_PollEvent(&event)) {
+      ImGui_ImplSDL2_ProcessEvent(&event);
       if (event.type == SDL_QUIT) {
         running = false;
       }
@@ -54,6 +53,12 @@ void App::run() {
       screens.back()->processEvent(event);
     }
 
+    // Begin new Imgui Frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(_window->_sdl_window);
+    ImGui::NewFrame();
+
+    _fpsCounter.addSample(1.0 / ImGui::GetIO().Framerate);
     now = SDL_GetPerformanceCounter();
     accumulator += (((double)(now - prev))/performanceFreq);
     prev = now;
@@ -62,10 +67,17 @@ void App::run() {
       accumulator -= UPDATE_TIMESTEP;
     }
 
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     screens.back()->render(cam);
-    SDL_GL_SwapWindow(window);
+    _fpsCounter.render();
+    screens.back()->renderImgui();
+    
+    // Render ImGUI on top of everything.
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    SDL_GL_SwapWindow(_window->_sdl_window);
   }
 
 }

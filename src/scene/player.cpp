@@ -3,8 +3,9 @@
 #include <glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
-
-#include "../math/util.h"
+#include <Engine/src/math/util.h>
+#include <Engine/dep/imgui.h>
+#include "../chunk.h"
 
 Player::Player() : Entity() {
 
@@ -14,7 +15,7 @@ Player::Player(Vector3f pos) : Entity(pos) {
 
 }
 
-void Player::processInput(Keyboard& keyboard, Mouse& mouse) {
+void Player::processInput(Engine::Keyboard& keyboard, Engine::Mouse& mouse) {
   vel = Vector3f(0, 0, 0);
 
   if (keyboard.isKeyDown(SDLK_w)) {
@@ -59,14 +60,22 @@ void Player::processInput(Keyboard& keyboard, Mouse& mouse) {
     pitch = -89.5;
   }
 
-  Quaternion yawRot = axisAngleToQuat(deg2rad(yaw), Vector3f(0.0, 1.0, 0.0));
+  Quaternion yawRot = Engine::axisAngleToQuat(Engine::deg2rad(yaw), Vector3f(0.0, 1.0, 0.0));
   vel = Vector3f((yawRot * Vector4f(vel, 1.0)));
   
 
-  rot = yawRot * axisAngleToQuat(deg2rad(pitch), Vector3f(1.0, 0.0, 0.0));
+  rot = yawRot * Engine::axisAngleToQuat(Engine::deg2rad(pitch), Vector3f(1.0, 0.0, 0.0));
 };
 
 void Player::tick(double dt) {
   pos = pos + (float)dt*vel;
-  //std::cout << "Player is at " << glm::to_string(pos) << "\n";
+}
+
+void Player::renderImgui() {
+  ImGui::SetNextWindowPos(Vector2f(0, 300));
+  ImGui::SetNextWindowSize(Vector2f(0, 0));
+  ImGui::Begin("Player entity Info");
+  ImGui::Text("Location: %f %f %f", pos.x, pos.y, pos.z);
+  Vector3i chunkPos = Chunk::getChunkPos(pos);
+  ImGui::Text("Chunk coordinaes: %i %i %i", chunkPos.x, chunkPos.y, chunkPos.z);
 }

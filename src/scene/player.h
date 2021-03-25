@@ -1,9 +1,12 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
+#include <Engine/src/math/vectors.h>
+#include <Engine/src/input/keyboard.h>
+#include <Engine/src/input/mouse.h>
+
 #include "entity.h"
-#include "../input/keyboard.h"
-#include "../input/mouse.h"
+
 
 class Player : public Entity {
 
@@ -20,8 +23,9 @@ public:
   Player();
   Player(Vector3f pos);
 
-  void processInput(Keyboard& keyboard, Mouse& mouse);
+  void processInput(Engine::Keyboard& keyboard, Engine::Mouse& mouse);
   void tick(double dt);
+  void renderImgui(); // Used to give debug info
 
 };
 
